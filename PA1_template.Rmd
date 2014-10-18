@@ -83,4 +83,4 @@ weekday_pattern <- sqldf("select interval,avg(steps),weekday as avg_steps from f
 
 plot(weekday_pattern[,-3],type = "l",ylab="avg steps per interval for weekdays",main="Activeness in weekdays")
 ```
-
+  We can see from the two above graphs that people start later in the morning during weekends (interval 600-900) but in overall do more steps.
