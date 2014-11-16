@@ -1,7 +1,22 @@
 base
+<<<<<<< HEAD
 DBI
 gsubfn
+=======
+datasets
+DBI
+graphics
+grDevices
+gsubfn
+methods
+>>>>>>> e6305e66cc6af87889714682eb1acd36c0bc77bd
 proto
 RSQLite
 RSQLite.extfuns
 sqldf
+<<<<<<< HEAD
+=======
+stats
+tcltk
+utils
+>>>>>>> e6305e66cc6af87889714682eb1acd36c0bc77bd

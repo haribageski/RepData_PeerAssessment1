@@ -7,9 +7,14 @@ output: html_document
 
 ##Loading and preprocessing the data...
 ```{r read_table,echo=TRUE}
+<<<<<<< HEAD
 #setting of current directory differs, you should set the path to your directory, hence do not follow the next line of code
 setwd("D:/HARI/university subjects/COMPUTER SCIENCE/Fun staf/Reproducible Research/Project 1")
 library(utils)
+=======
+library(utils)
+unzip("activity.zip")
+>>>>>>> e6305e66cc6af87889714682eb1acd36c0bc77bd
 activity<-read.csv("activity.csv")
 ```
 
@@ -19,7 +24,11 @@ activity<-read.csv("activity.csv")
 library(stats)
 filter <-aggregate(steps~date ,activity,FUN=sum) #creates a datatable with columns date    and total-steps-per-day
 num_of_days <- length(filter$date)
+<<<<<<< HEAD
 hist(filter$steps,num_of_days)  #length(filter$date) = 53 : the number of days
+=======
+hist(filter$steps,num_of_days) #length(filter$date) = 53 : the number of days
+>>>>>>> e6305e66cc6af87889714682eb1acd36c0bc77bd
 mean_step <- mean(filter$steps)
 mean_step
 median_step <- median(filter$steps)
@@ -78,11 +87,19 @@ head(filled_activity)
 library(sqldf) 
 weekend_pattern <- sqldf("select interval,avg(steps),weekday as avg_steps from filled_activity where weekday='0' group by interval,weekday")
 
+<<<<<<< HEAD
 png("part3.png", width=480, height=480)
 plot(weekend_pattern[,-3],type = "l",ylab="avg steps per interval for weekends",main="Activeness in weekdends with black, in weekdays with blue")
 
 weekday_pattern <- sqldf("select interval,avg(steps),weekday as avg_steps from filled_activity where weekday='1' group by interval,weekday")
 
 lines(weekday_pattern[,-3],type = "l",ylab="avg steps per interval for weekdays",main="Activeness in weekdays",col="blue")
+=======
+plot(weekend_pattern[,-3],type = "l",ylab="avg steps per interval for weekends",main="Activeness in weekdends")
+
+weekday_pattern <- sqldf("select interval,avg(steps),weekday as avg_steps from filled_activity where weekday='1' group by interval,weekday")
+
+plot(weekday_pattern[,-3],type = "l",ylab="avg steps per interval for weekdays",main="Activeness in weekdays")
+>>>>>>> e6305e66cc6af87889714682eb1acd36c0bc77bd
 ```
   We can see from the two above graphs that people start later in the morning during weekends (interval 600-900) but in overall do more steps.
