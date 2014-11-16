@@ -1,0 +1,88 @@
+---
+title: "Reproducible Research"
+author: "Haralampi Bageski"
+date: "Friday, October 18, 2014"
+output: html_document
+---
+
+##Loading and preprocessing the data...
+```{r read_table,echo=TRUE}
+#setting of current directory differs, you should set the path to your directory, hence do not follow the next line of code
+setwd("D:/HARI/university subjects/COMPUTER SCIENCE/Fun staf/Reproducible Research/Project 1")
+library(utils)
+activity<-read.csv("activity.csv")
+```
+
+  
+##What is mean total number of steps taken per day?
+```{r histogram,echo=TRUE,fig.height=4}
+library(stats)
+filter <-aggregate(steps~date ,activity,FUN=sum) #creates a datatable with columns date    and total-steps-per-day
+num_of_days <- length(filter$date)
+hist(filter$steps,num_of_days)  #length(filter$date) = 53 : the number of days
+mean_step <- mean(filter$steps)
+mean_step
+median_step <- median(filter$steps)
+median_step
+```
+
+##What is the average daily activity pattern?
+```{r time_series,echo=TRUE,fig.height=4}
+day_pattern <- activity[,c(1,3)]
+plot(day_pattern,main="Basic plot with no modifications")
+
+day_pattern <- aggregate(steps ~ interval, day_pattern, mean)
+plot(day_pattern,type = "l",ylab="avg steps per interval",main="Activeness per time period of the day")
+most_steps <- max(aggregate(steps ~ interval, day_pattern, mean)[,2],na.rm=T)
+most_steps
+
+which(day_pattern$steps == most_steps, arr.ind = TRUE)  #gives the index
+active_interval <- (day_pattern[104,1])      #since intervals start from 0
+active_interval
+```
+
+
+##Imputing missing values...
+```{r missing_data,echo=TRUE,fig.height=4}
+filled_activity <- activity
+Steps <- filled_activity$steps
+NArows <- Steps[is.na(Steps)]
+length(NArows)
+ndices_of_NAs <- which(is.na(Steps))
+filled_activity[ndices_of_NAs,1] <-day_pattern[filled_activity[ndices_of_NAs,3]/5+1,2]  #On the right hand side activity[indices_of_NAs,3] gives the interval we want to use, but to get the row of that interval, we must apply /5+1
+```
+
+
+##Finding meand and median on the new data set...
+```{r filled_data,echo=TRUE,fig.height=4}
+knitr::opts_chunk$set(cache=TRUE)       #it makes the variables accessible from other                 code chunks
+filter2 <-aggregate(steps~date ,filled_activity,FUN=sum) #creates a datatable with   columns date    and total-steps-per-day
+num_of_days2 <- length(filter2$date)
+hist(filter2$steps,num_of_days2)      #length(filter$date) = 53 : the number of days
+mean(filter2$steps)
+median(filter2$steps)
+#day_pattern2 <- aggregate(steps ~ interval, filter2, mean)
+#plot(day_pattern2,type = "l",ylab="avg steps per interval",main="Activeness per time period of the day")
+```
+  We can conclude that the new mean and median differs from the old mean `r mean_step` and old median `r median_step`. By my calculations we get that the mean and the median should differ more that what we get before filling empty data. The reason for that is the negligence of outliers.
+  
+  
+##Are there differences in activity patterns between weekdays and weekends?
+```{r weekdays,echo=TRUE,fig.height=4}
+df = data.frame(date=filled_activity$date)
+wkday <-c("Monday","Tuesday","Wednesday","Thursday","Friday")
+df$day <- weekdays(as.Date(df$date))
+filled_activity$weekday <-df$day %in% wkday  #1 if weekday, 0 otherwise
+head(filled_activity)
+
+library(sqldf) 
+weekend_pattern <- sqldf("select interval,avg(steps),weekday as avg_steps from filled_activity where weekday='0' group by interval,weekday")
+
+png("part3.png", width=480, height=480)
+plot(weekend_pattern[,-3],type = "l",ylab="avg steps per interval for weekends",main="Activeness in weekdends with black, in weekdays with blue")
+
+weekday_pattern <- sqldf("select interval,avg(steps),weekday as avg_steps from filled_activity where weekday='1' group by interval,weekday")
+
+lines(weekday_pattern[,-3],type = "l",ylab="avg steps per interval for weekdays",main="Activeness in weekdays",col="blue")
+```
+  We can see from the two above graphs that people start later in the morning during weekends (interval 600-900) but in overall do more steps.

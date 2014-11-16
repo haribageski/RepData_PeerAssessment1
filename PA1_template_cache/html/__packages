@@ -1,0 +1,7 @@
+base
+DBI
+gsubfn
+proto
+RSQLite
+RSQLite.extfuns
+sqldf
